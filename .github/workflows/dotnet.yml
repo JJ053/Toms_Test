@@ -31,7 +31,6 @@ jobs:
       uses: actions/checkout@v4
       with: 
         submodules: true
-        ref: feat-yml
 
   host_build:
     needs: source-checkout
@@ -49,7 +48,6 @@ jobs:
       run: |
           pwd
           ls 
-          ls ./subrepos/GrpcServer/src/
           dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Build
@@ -85,7 +83,6 @@ jobs:
 
     - name: Restore dependencies
       run: |
-          pwd
           cd $GITHUB_WORKSPACE
           pwd
           dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
