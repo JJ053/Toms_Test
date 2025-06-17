@@ -37,6 +37,40 @@ jobs:
           subrepos/GrpcServer
           subrepos/WebPlugins
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Host Restore Dependencies
+      run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
+
+    - name: Host Build
+      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Debug --no-restore --output ./release/bin
+
+    - name: Data Publish
+      run: |
+        cd ./release
+        Copy-Item -Path ../subrepos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
+        cd ..
+      shell: pwsh
+
+    - name: WebApi Restore Dependencies
+      run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+
+    - name: WebApi Build
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Debug --no-restore --output ./release/IoTCenterWeb/publish 
+
+    - name: Plugins Build
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+
+    - name: Plugins Publish
+      run: |
+        cd ./release
+        Copy-Item -Path ../subrepos/WebPlugins/src/back-end/plugins/* -Destination ./ -Recurse -Force
+        cd ..
+      shell: pwsh
+
     - name: Nvm Install(Linux/macOS)
       if: matrix.os != 'windows-latest'
       shell: bash
@@ -46,7 +80,7 @@ jobs:
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
       env:
-        NVM_DIR: /home/runner/.nvm
+        NVM_DIR: $HOME/.nvm
 
     - name: Verify nvm installation
       run: nvm --version
