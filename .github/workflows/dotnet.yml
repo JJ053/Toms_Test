@@ -47,7 +47,7 @@ jobs:
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
         nvm install 23.1.0
-        nvm 14.21.3
+        nvm install 14.21.3
         
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
         nvm use 23.1.0
