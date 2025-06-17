@@ -86,21 +86,18 @@ jobs:
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\back-end\plugins .\
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        cd $GITHUB_WORKSPACE
       shell: powershell
 
     - name: Setup Node.js 23.1.0
       uses: actions/setup-node@v4
       with:
         node-version: 23.1.0
-
-    - name: Install dependencies
-      run: npm install
     
     - name: Web Base Build
       run: |
-        nvm use 23.1.0
-        npm install pnpm -g
+        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        npm install pnpm
         pnpm install
         pnpm build
         cd $GITHUB_WORKSPACE
@@ -118,21 +115,17 @@ jobs:
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist .\IoTCenterWeb\publish\wwwroot\
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cd $GITHUB_WORKSPACE
       shell: powershell
 
     - name: Setup Node.js 14.21.3
       uses: actions/setup-node@v4
       with:
         node-version: 14.21.3
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm install
 
     - name: Web Plugins Build
       run: |
-        nvm use 14.21.3
+        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         npm install
         npm run build-all
         cd $GITHUB_WORKSPACE
