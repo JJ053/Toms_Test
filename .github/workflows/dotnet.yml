@@ -76,12 +76,14 @@ jobs:
       shell: bash
       run: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-        echo 'export NVM_DIR="$HOME/runner/.nvm"' >> ~/.bashrc
-        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
-        source ~/.bashrc
-        nvm --version
-        nvm use system
-        npm uninstall -g a_module
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+      env:
+        NVM_DIR: ${{ github.workspace }}/.nvm
+
+    - name: Verify nvm installation
+      run: nvm --version
 
     - name: Nvm Install(Windows)
       if: matrix.os == 'windows-latest'
