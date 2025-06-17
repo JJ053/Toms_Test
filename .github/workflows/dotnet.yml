@@ -51,9 +51,9 @@ jobs:
     - name: Data Publish
       run: |
         cd ./release
-        xcopy /E /I ..\subrepos\GrpcServer\src\config\* .\
+        Copy-Item -Path ../subrepos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
         cd ..
-      shell: powershell
+      shell: pwsh
 
     - name: WebApi Restore Dependencies
       run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
@@ -67,9 +67,9 @@ jobs:
     - name: Plugins Publish
       run: |
         cd ./release
-        xcopy /E /I ..\subrepos\WebPlugins\src\back-end\plugins .\
+        Copy-Item -Path ../subrepos/WebPlugins/src/back-end/plugins/* -Destination ./ -Recurse -Force
         cd ..
-      shell: powershell
+      shell: pwsh
 
     - name: Nvm Install(Linux/macOS)
       if: matrix.os != 'windows-latest'
@@ -113,9 +113,9 @@ jobs:
     - name: Web Base Publish
       run: |
         cd ./release
-        xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist .\IoTCenterWeb\publish\wwwroot\
+        Copy-Item -Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* -Destination ./IoTCenterWeb/publish/wwwroot/ -Recurse -Force
         cd ..
-      shell: powershell
+      shell: pwsh
 
     - name: Node.14 Install
       run: |
@@ -132,12 +132,12 @@ jobs:
     - name: Web Plugins Publish
       run: |
         cd ./release
-        if(Test-Path ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static){
-          Remove-Item ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static
+        if(Test-Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static){
+          Remove-Item ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
         }
-        xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist .\IoTCenterWeb\publish\wwwroot\
+        Copy-Item -Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/* -Destination ./IoTCenterWeb/publish/wwwroot/ -Recurse -Force
         cd ..
-      shell: powershell
+      shell: pwsh
 
     - name: Zip(Linux/macOS)
       if: matrix.os != 'windows-latest'
