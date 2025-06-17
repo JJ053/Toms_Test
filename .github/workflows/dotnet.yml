@@ -48,16 +48,7 @@ jobs:
     - name: Host Build
       run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Debug --no-restore --output ./release/bin
 
-    - name: Data Config(Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        cd ./release
-        cp -rf ../subrepos/GrpcServer/src/config/* ./
-        cd $GITHUB_WORKSPACE
-      shell: bash
-
-    - name: Data Config(Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Data Publish
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\GrpcServer\src\config\* .\
@@ -73,55 +64,63 @@ jobs:
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
-    - name: Plugins Config(Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        cd ./release
-        cp -rf ../subrepos/WebPlugins/src/back-end/plugins ./
-        cd $GITHUB_WORKSPACE
-      shell: bash
-
-    - name: Plugins Config(Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Plugins Publish
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\back-end\plugins .\
         cd ..
       shell: powershell
 
-    - name: Setup Node.js 23.1.0
-      uses: actions/setup-node@v4
-      with:
-        node-version: 23.1.0
+    - name: Nvm Install(Linux/macOS)
+      if: matrix.os != 'windows-latest'
+      shell: bash
+      run: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+        echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+        echo "$HOME/.nvm" >> $GITHUB_PATH
+        echo ". \"$HOME/.nvm/nvm.sh\"" >> $HOME/.bashrc
+        . "$HOME/.nvm/nvm.sh"
+        nvm --version
+
+    - name: Nvm Install(Windows)
+      if: matrix.os == 'windows-latest'
+      shell: powershell
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.zip" -OutFile "nvm-setup.zip"
+        Expand-Archive -Path "nvm-setup.zip" -DestinationPath "nvm-install"
+        Start-Process -FilePath "$env:RUNNER_TEMP\nvm-install\nvm-setup.exe" -ArgumentList "/S" -Wait -Verb RunAs
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        nvm root C:\nvm
+        nvm node_mirror https://npmmirror.com/mirrors/node/
+        nvm npm_mirror https://npmmirror.com/mirrors/npm/
+        nvm version
+
+    - name: Node.23 Install
+      run: |
+        nvm install 23.1.0
+        nvm use 23.1.0
     
     - name: Web Base Build
       run: |
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        nvm --version
+
         npm install pnpm -g
         pnpm install --no-frozen-lockfile
         pnpm build
         cd $GITHUB_WORKSPACE
 
-    - name: Web Base Config(Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        cd ./release
-        cp -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* ./IoTCenterWeb/publish/wwwroot/
-        cd $GITHUB_WORKSPACE
-      shell: bash
-
-    - name: Web Base Config(Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Web Base Publish
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist .\IoTCenterWeb\publish\wwwroot\
         cd ..
       shell: powershell
 
-    - name: Setup Node.js 14.21.3
-      uses: actions/setup-node@v4
-      with:
-        node-version: 14.21.3
+    - name: Node.14 Install
+      run: |
+        nvm install 14.21.3
+        nvm use 14.21.3    
 
     - name: Web Plugins Build
       run: |
@@ -130,17 +129,7 @@ jobs:
         npm run build-all
         cd $GITHUB_WORKSPACE
 
-    - name: Web Base Config(Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        cd ./release
-        rm -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
-        cp -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/* ./IoTCenterWeb/publish/wwwroot/
-        cd $GITHUB_WORKSPACE
-      shell: bash
-
-    - name: Web Base Config(Windows)
-      if: matrix.os == 'windows-latest'
+    - name: Web Plugins Publish
       run: |
         cd ./release
         if(Test-Path ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static){
