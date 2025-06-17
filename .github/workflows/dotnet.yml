@@ -97,7 +97,7 @@ jobs:
     - name: Web Base Build
       run: |
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        npm install pnpm
+        npm install pnpm -g
         pnpm install
         pnpm build
         cd $GITHUB_WORKSPACE
