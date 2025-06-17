@@ -61,7 +61,7 @@ jobs:
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\GrpcServer\src\config\* .\
-        cd $GITHUB_WORKSPACE
+        cd ..
       shell: powershell
 
     - name: WebApi Restore Dependencies
@@ -81,12 +81,12 @@ jobs:
         cd $GITHUB_WORKSPACE
       shell: bash
 
-    - name: Data Config(Windows)
+    - name: Plugins Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\back-end\plugins .\
-        cd $GITHUB_WORKSPACE
+        cd ..
       shell: powershell
 
     - name: Setup Node.js 23.1.0
@@ -110,12 +110,12 @@ jobs:
         cd $GITHUB_WORKSPACE
       shell: bash
 
-    - name: Data Config(Windows)
+    - name: Web Base Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist .\IoTCenterWeb\publish\wwwroot\
-        cd $GITHUB_WORKSPACE
+        cd ..
       shell: powershell
 
     - name: Setup Node.js 14.21.3
@@ -139,7 +139,7 @@ jobs:
         cd $GITHUB_WORKSPACE
       shell: bash
 
-    - name: Data Config(Windows)
+    - name: Web Base Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
         cd ./release
@@ -147,7 +147,7 @@ jobs:
           Remove-Item ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static
         }
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist .\IoTCenterWeb\publish\wwwroot\
-        cd $GITHUB_WORKSPACE
+        cd ..
       shell: powershell
 
     - name: Zip(Linux/macOS)
@@ -167,7 +167,7 @@ jobs:
         }
         cd ./release
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
-        cd $GITHUB_WORKSPACE
+        cd ..
       shell: powershell
 
     - name: Upload Release Asset
