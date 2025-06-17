@@ -20,47 +20,40 @@ jobs:
         draft: false
         prerelease: false
 
-  source-checkout:
+  build:
     needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+
     steps:
-    - name: Checkout source
+    - name: Checkout Source
       uses: actions/checkout@v4
       with: 
+        ref: main
         submodules: true
-    - name: List files in repository
-      run: |
-        ls
-        cd subrepos
-        ls
+        sparse-checkout: |
+          subrepos/GrpcServer
+          subrepos/WebPlugins
 
-  host_build:
-    needs: source-checkout
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-    - name: List files in repository
-      run: |
-        ls
-        cd subrepos
-        ls
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x'
 
-    - name: Restore dependencies
-      run: |
-          pwd
-          ls 
-          dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: |
+          23.1.0
+          14.21.3
+        cache: 'npm'
 
-    - name: Build
+    - name: Host Restore Dependencies
+      run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
+
+    - name: Host Build
       run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Debug --no-restore --output ./release/bin
 
     - name: Data Config(Linux/macOS)
@@ -70,7 +63,7 @@ jobs:
         cp -rf ../subrepos/GrpcServer/src/config/* ./
         cd ..
       shell: bash
-      
+
     - name: Data Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -78,46 +71,15 @@ jobs:
         xcopy /E /I ..\subrepos\GrpcServer\src\config\* .\
         cd ..
       shell: powershell
-  
-  api_build:
-    needs: source-checkout
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
 
-    - name: Restore dependencies
-      run: |
-          cd $GITHUB_WORKSPACE
-          pwd
-          dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+    - name: WebApi Restore Dependencies
+      run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
-    - name: Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Debug --no-restore --output ./release/IoTCenterWeb/publish
+    - name: WebApi Build
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Debug --no-restore --output ./release/IoTCenterWeb/publish 
 
-  plugins_build:
-    needs: source-checkout
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Build
-      run: |
-          pwd
-          cd $GITHUB_WORKSPACE
-          pwd
-          dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+    - name: Plugins Build
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Config(Linux/macOS)
       if: matrix.os != 'windows-latest'
@@ -126,7 +88,7 @@ jobs:
         cp -rf ../subrepos/WebPlugins/src/back-end/plugins ./
         cd ..
       shell: bash
-      
+
     - name: Data Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -135,27 +97,15 @@ jobs:
         cd ..
       shell: powershell
 
-  web_base_build:
-    needs: source-checkout
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-    - name: Setup Node
-      uses: actions/setup-dotnet@v4
-      with:
-        node-version: '23.1.0'
-        cache: 'npm'
-    - run: |
-        pwd
-        cd $GITHUB_WORKSPACE
-        pwd
+    - name: Web Base Build
+      run: |
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        nvm use 23.1.0
+        npm install pnpm -g
         pnpm install
         pnpm build
         cd $GITHUB_WORKSPACE
-    
+
     - name: Web Base Config(Linux/macOS)
       if: matrix.os != 'windows-latest'
       run: |
@@ -163,7 +113,7 @@ jobs:
         cp -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* ./IoTCenterWeb/publish/wwwroot/
         cd $GITHUB_WORKSPACE
       shell: bash
-      
+
     - name: Data Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -171,29 +121,15 @@ jobs:
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist .\IoTCenterWeb\publish\wwwroot\
         cd $GITHUB_WORKSPACE
       shell: powershell
-  
 
-  web_plugins_build:
-    needs: source-checkout
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps:
-    - name: Setup Node
-      uses: actions/setup-dotnet@v4
-      with:
-        node-version: '14.21.3'
-        cache: 'npm'
-    - run: |
-        pwd
-        cd $GITHUB_WORKSPACE
-        pwd
+    - name: Web Plugins Build
+      run: |
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        nvm use 14.21.3
         npm install
         npm run build-all
         cd $GITHUB_WORKSPACE
-    
+
     - name: Web Base Config(Linux/macOS)
       if: matrix.os != 'windows-latest'
       run: |
@@ -202,7 +138,7 @@ jobs:
         cp -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/* ./IoTCenterWeb/publish/wwwroot/
         cd $GITHUB_WORKSPACE
       shell: bash
-      
+
     - name: Data Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -214,25 +150,15 @@ jobs:
         cd $GITHUB_WORKSPACE
       shell: powershell
 
-  release_upload:
-    needs: [host_build,api_build,plugins_build,web_base_build,web_plugins_build]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    steps: 
     - name: Zip(Linux/macOS)
       if: matrix.os != 'windows-latest'
       run: |
-        pwd
-        cd $GITHUB_WORKSPACE
-        pwd
         rm -f release_${{ matrix.os }}.zip
         cd ./release
         zip -r ../release_${{ matrix.os }}.zip .
         cd ..
       shell: bash
-      
+
     - name: Zip(Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -243,7 +169,7 @@ jobs:
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
         cd ..
       shell: powershell
-      
+
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1.0.2
