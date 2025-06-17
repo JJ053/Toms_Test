@@ -80,7 +80,7 @@ jobs:
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
       env:
-        NVM_DIR: ${{ github.workspace }}/.nvm
+        NVM_DIR: $HOME/.nvm
 
     - name: Verify nvm installation
       run: nvm --version
