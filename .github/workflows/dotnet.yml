@@ -46,7 +46,7 @@ jobs:
       run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Host Build
-      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Debug --no-restore --output ./release/bin
+      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Debug --no-restore --output ./release/bin
 
     - name: Data Config(Linux/macOS)
       if: matrix.os != 'windows-latest'
@@ -68,7 +68,7 @@ jobs:
       run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: WebApi Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Debug --no-restore --output ./release/IoTCenterWeb/publish 
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Debug --no-restore --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
