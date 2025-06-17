@@ -76,10 +76,9 @@ jobs:
       shell: bash
       run: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-        echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
-        echo "$HOME/.nvm" >> $GITHUB_PATH
-        echo ". \"$HOME/.nvm/nvm.sh\"" >> $HOME/.bashrc
-        . "$HOME/.nvm/nvm.sh"
+        echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+        source ~/.bashrc
         nvm --version
 
     - name: Nvm Install(Windows)
@@ -90,9 +89,8 @@ jobs:
         Expand-Archive -Path "nvm-setup.zip" -DestinationPath "nvm-install"
         Start-Process -FilePath "$env:RUNNER_TEMP\nvm-install\nvm-setup.exe" -ArgumentList "/S" -Wait -Verb RunAs
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        
         nvm root C:\nvm
-        nvm node_mirror https://npmmirror.com/mirrors/node/
-        nvm npm_mirror https://npmmirror.com/mirrors/npm/
         nvm version
 
     - name: Node.23 Install
