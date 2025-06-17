@@ -37,7 +37,7 @@ jobs:
           subrepos/GrpcServer
           subrepos/WebPlugins
 
-    - name: Nvm Install(Linux/macOS)
+    - name: Nvm Build
       if: matrix.os != 'windows-latest'
       shell: bash
       run: |
@@ -46,16 +46,23 @@ jobs:
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-        command -v nvm
-
         nvm install 23.1.0
+        nvm 14.21.3
+        
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        nvm use 23.1.0
 
-        node -v
+        npm install pnpm -g
+        pnpm install --no-frozen-lockfile
+        pnpm build
+        cd $GITHUB_WORKSPACE
 
-        npm -v
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        nvm use 14.21.3
 
-    - name: Verify nvm installation
-      run: nvm --version
+        npm install
+        npm run build-all
+        cd $GITHUB_WORKSPACE
 
     - name: Nvm Install(Windows)
       if: matrix.os == 'windows-latest'
@@ -69,42 +76,11 @@ jobs:
         nvm root C:\nvm
         nvm version
 
-    - name: Node.23 Install
-      run: |
-        nvm install 23.1.0
-        nvm use 23.1.0
-    
-    - name: Web Base Build
-      run: |
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        nvm --version
-
-        npm install pnpm -g
-        pnpm install --no-frozen-lockfile
-        pnpm build
-        cd $GITHUB_WORKSPACE
-
     - name: Web Base Publish
       run: |
         cd ./release
         Copy-Item -Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* -Destination ./IoTCenterWeb/publish/wwwroot/ -Recurse -Force
-        cd ..
-      shell: pwsh
 
-    - name: Node.14 Install
-      run: |
-        nvm install 14.21.3
-        nvm use 14.21.3    
-
-    - name: Web Plugins Build
-      run: |
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
-        npm install
-        npm run build-all
-        cd $GITHUB_WORKSPACE
-
-    - name: Web Plugins Publish
-      run: |
         cd ./release
         if(Test-Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static){
           Remove-Item ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
