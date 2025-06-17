@@ -42,11 +42,17 @@ jobs:
       shell: bash
       run: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-      env:
-        NVM_DIR: /home/runner/.nvm
+
+        command -v nvm
+
+        nvm install 23.1.0
+
+        node -v
+
+        npm -v
 
     - name: Verify nvm installation
       run: nvm --version
