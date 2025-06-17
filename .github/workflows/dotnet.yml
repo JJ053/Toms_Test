@@ -49,13 +49,13 @@ jobs:
         nvm install 23.1.0
         nvm install 14.21.3
         
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        nvm use 23.1.0
-
-        npm install pnpm -g
-        pnpm install --no-frozen-lockfile
-        pnpm build
-        cd $GITHUB_WORKSPACE
+        #cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        #nvm use 23.1.0
+        #
+        #npm install pnpm -g
+        #pnpm install --no-frozen-lockfile
+        #pnpm build
+        #cd $GITHUB_WORKSPACE
 
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         nvm use 14.21.3
