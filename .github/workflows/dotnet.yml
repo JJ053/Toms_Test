@@ -53,7 +53,7 @@ jobs:
       run: |
         cd ./release
         cp -rf ../subrepos/GrpcServer/src/config/* ./
-        cd ..
+        cd $GITHUB_WORKSPACE
       shell: bash
 
     - name: Data Config(Windows)
@@ -61,7 +61,7 @@ jobs:
       run: |
         cd ./release
         xcopy /E /I ..\subrepos\GrpcServer\src\config\* .\
-        cd ..
+        cd $GITHUB_WORKSPACE
       shell: powershell
 
     - name: WebApi Restore Dependencies
@@ -78,7 +78,7 @@ jobs:
       run: |
         cd ./release
         cp -rf ../subrepos/WebPlugins/src/back-end/plugins ./
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        cd $GITHUB_WORKSPACE
       shell: bash
 
     - name: Data Config(Windows)
@@ -96,7 +96,7 @@ jobs:
     
     - name: Web Base Build
       run: |
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
         npm install pnpm
         pnpm install
         pnpm build
@@ -107,7 +107,7 @@ jobs:
       run: |
         cd ./release
         cp -rf ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* ./IoTCenterWeb/publish/wwwroot/
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cd $GITHUB_WORKSPACE
       shell: bash
 
     - name: Data Config(Windows)
@@ -125,7 +125,7 @@ jobs:
 
     - name: Web Plugins Build
       run: |
-        cd ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         npm install
         npm run build-all
         cd $GITHUB_WORKSPACE
@@ -142,10 +142,10 @@ jobs:
     - name: Data Config(Windows)
       if: matrix.os == 'windows-latest'
       run: |
+        cd ./release
         if(Test-Path ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static){
           Remove-Item ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static
         }
-        cd ./release
         xcopy /E /I ..\subrepos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist .\IoTCenterWeb\publish\wwwroot\
         cd $GITHUB_WORKSPACE
       shell: powershell
@@ -156,7 +156,7 @@ jobs:
         rm -f release_${{ matrix.os }}.zip
         cd ./release
         zip -r ../release_${{ matrix.os }}.zip .
-        cd ..
+        cd $GITHUB_WORKSPACE
       shell: bash
 
     - name: Zip(Windows)
@@ -167,7 +167,7 @@ jobs:
         }
         cd ./release
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
-        cd ..
+        cd $GITHUB_WORKSPACE
       shell: powershell
 
     - name: Upload Release Asset
