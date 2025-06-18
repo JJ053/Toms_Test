@@ -45,10 +45,7 @@ jobs:
       run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Host Build
-      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
-
-    - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-build --output ./release/bin
+      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore --output ./release/bin
 
     - name: Data Publish
       run: |
@@ -88,10 +85,7 @@ jobs:
       run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: WebApi Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
-
-    - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-build --output ./release/IoTCenterWeb/publish 
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
@@ -107,6 +101,81 @@ jobs:
         name: build-api-${{ matrix.os }}
         path: ./release/*
 
+  web-build:
+    needs: create-release
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+        submodules: true
+        sparse-checkout: |
+          subrepos/WebPlugins/src/back-end/front-end/packages
+
+    - name: Nvm Install
+      if: matrix.os == 'windows-latest'
+      shell: powershell
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.zip" -OutFile "nvm-setup.zip"
+        Expand-Archive -Path "nvm-setup.zip" -DestinationPath "nvm-install"
+        Start-Process -FilePath "$env:RUNNER_TEMP\nvm-install\nvm-setup.exe" -ArgumentList "/S" -Wait -Verb RunAs
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        
+        nvm root C:\nvm
+        nvm version
+
+    - name: Node.23 Install
+      run: |
+        nvm install 23.1.0
+        nvm use 23.1.0
+    
+    - name: Web Base Build
+      run: |
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        nvm --version
+
+        npm install pnpm -g
+        pnpm install --no-frozen-lockfile
+        pnpm build
+        cd $GITHUB_WORKSPACE
+
+    - name: Web Base Publish
+      run: |
+        cd ./release
+        Copy-Item -Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist/* -Destination ./IoTCenterWeb/publish/wwwroot/ -Recurse -Force
+        cd ..
+      shell: pwsh
+
+    - name: Node.14 Install
+      run: |
+        nvm install 14.21.3
+        nvm use 14.21.3    
+
+    - name: Web Plugins Build
+      run: |
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        npm install
+        npm run build-all
+        cd $GITHUB_WORKSPACE
+
+    - name: Web Plugins Publish
+      run: |
+        cd ./release
+        if(Test-Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static){
+          Remove-Item ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
+        }
+        Copy-Item -Path ../subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/* -Destination ./IoTCenterWeb/publish/wwwroot/ -Recurse -Force
+        cd ..
+      shell: pwsh
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-web-${{ matrix.os }}
+        path: ./release/*
+
   release-upload :
     needs: [create-release,host-build,api-build]
     runs-on: ${{ matrix.os }}
@@ -116,24 +185,27 @@ jobs:
 
     steps:
     
-    - name: Download Artifacts
+    - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-host-${{ matrix.os }},build-api-${{ matrix.os }}
         path: ./release
 
-    - name: Zip Release      
+    - name: Zip(Linux/macOS)
+      if: matrix.os != 'windows-latest'
       run: |
+        rm -f release_${{ matrix.os }}.zip
         cd ./release
-        Get-ChildItem -Directory | ForEach-Object
-        {
-          $subFolder = $_.FullName
-          Get-ChildItem -Path $subFolder -Force | Move-Item -Destination . -Force
-          if (!(Get-ChildItem -Path $subFolder -Force))
-          {
-            Remove-Item -Path $subFolder -Force
-          }
+        zip -r ../release_${{ matrix.os }}.zip .
+        cd $GITHUB_WORKSPACE
+      shell: bash
+
+    - name: Zip(Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        if(Test-Path release_${{ matrix.os }}.zip){
+          Remove-Item release_${{ matrix.os }}.zip
         }
+        cd ./release
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
         cd ..
       shell: powershell
