@@ -28,6 +28,7 @@ jobs:
         $npmPath = "$env:USERPROFILE\.nvm\npm"
         $env:Path = "$nvmPath;$npmPath;$env:Path"
         Set-Item -Path Env:Path -Value $env:Path
+        nvm --version
 
     - name: Verify NVM Installation
       shell: cmd
