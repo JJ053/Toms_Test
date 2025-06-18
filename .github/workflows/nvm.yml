@@ -18,7 +18,8 @@ jobs:
       shell: cmd
       run: |
         dir
-        copy nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
+        tree
+        copy .\nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
     
         echo "%LOCALAPPDATA%\nvm" >> %GITHUB_PATH%
 
