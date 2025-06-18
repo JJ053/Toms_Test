@@ -12,14 +12,16 @@ jobs:
         ref: main
         submodules: true
         sparse-checkout: |          
-          subrepos/WebPlugins          
+          subrepos/WebPlugins/src/front-end
 
     - name: Install NVM 
-      shell: cmd
-      run: |          
-        copy subrepos\WebPlugins\src\back-end\front-end\nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
-    
-        echo "%LOCALAPPDATA%\nvm" >> %GITHUB_PATH%
+      shell: powershell
+      run: |
+        .\subrepos\WebPlugins\src\back-end\front-end\nvm-setup.exe /S
+        
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            
+        nvm version
 
     - name: Verify NVM Installation
       shell: cmd
@@ -31,6 +33,7 @@ jobs:
       run: |
         nvm install 14.21.3
         nvm use 14.21.3
+        node -v
 
     - name: Install Dependencies
       run: npm install
