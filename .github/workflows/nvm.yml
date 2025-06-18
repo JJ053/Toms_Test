@@ -13,11 +13,14 @@ jobs:
         submodules: true
         sparse-checkout: |
           subrepos/WebPlugins/src/back-end/front-end
+        fetch-depth: 1 
 
     - name: Install NVM 
       shell: cmd
       run: |
         dir
+        tree
+        cd subrepos/WebPlugins/src/back-end/front-end
         tree
         copy .\nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
     
