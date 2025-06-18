@@ -116,10 +116,16 @@ jobs:
 
     steps:
     
-    - name: Download Artifacts
+    - name: Download Host Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-host-${{ matrix.os }},build-api-${{ matrix.os }}
+        name: build-host-${{ matrix.os }}
+        path: ./release
+
+    - name: Download Api Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-api-${{ matrix.os }}
         path: ./release
 
     - name: Zip Release      
