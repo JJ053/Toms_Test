@@ -17,6 +17,7 @@ jobs:
     - name: Install NVM 
       shell: cmd
       run: |
+        dir
         copy nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
     
         echo "%LOCALAPPDATA%\nvm" >> %GITHUB_PATH%
