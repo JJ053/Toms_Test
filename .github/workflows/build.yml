@@ -179,7 +179,7 @@ jobs:
         path: ./release/*
 
   release-upload :
-    needs: [host-build,api-huild,web-build]
+    needs: [host-build,api-build,web-build]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
