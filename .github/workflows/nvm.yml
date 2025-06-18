@@ -18,8 +18,7 @@ jobs:
           /subrepos/WebPlugins/src
           /subrepos/WebPlugins/src/back-end
           /subrepos/WebPlugins/src/back-end/front-end
-          /subrepos/WebPlugins/src/back-end/front-end/*
-        sparse-checkout-cone-mode: false
+          /subrepos/WebPlugins/src/back-end/front-end/*        
 
     - name: Install NVM 
       shell: cmd
