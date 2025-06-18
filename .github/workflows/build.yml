@@ -48,7 +48,7 @@ jobs:
       run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
 
     - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-build --output ./release/bin
+      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Release --no-build --output ./release/bin
 
     - name: Data Publish
       run: |
@@ -91,7 +91,7 @@ jobs:
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-build --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Release --no-build --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
