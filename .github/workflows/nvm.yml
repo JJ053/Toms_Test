@@ -11,8 +11,8 @@ jobs:
       with: 
         ref: main
         submodules: true
-        sparse-checkout: |          
-          subrepos/WebPlugins
+        sparse-checkout: |
+          subrepos/WebPlugins/src/front-end
 
     - name: Install NVM 
       shell: powershell
