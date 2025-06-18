@@ -1,0 +1,42 @@
+name: Windows NVM Setup
+
+on: [push]
+
+jobs:
+  setup:
+    runs-on: windows-latest
+    steps:
+    - name: Download nvm-windows
+      shell: powershell
+      run: |
+        $url = "https://github.com/coreybutler/nvm-windows/releases/latest/download/nvm-setup.exe"
+        Invoke-WebRequest -Uri $url -OutFile nvm-setup.exe
+
+    - name: Install nvm-windows
+      shell: powershell
+      run: |
+        Start-Process .\nvm-setup.exe -ArgumentList "/S" -Wait
+
+    - name: Configure environment
+      shell: powershell
+      run: |
+        $nvmPath = "$env:ProgramFiles\nvm"
+        $nodeSymlink = "$env:ProgramFiles\nodejs"
+        # 设置环境变量
+        "NVM_HOME=$nvmPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+        "NVM_SYMLINK=$nodeSymlink" | Out-File -FilePath $env:GITHUB_ENV -Append
+        # 将路径添加到PATH最前面
+        $newPath = "$nodeSymlink;$nvmPath;" + $env:PATH
+        "PATH=$newPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+    - name: Verify nvm installation
+      shell: powershell
+      run: nvm version
+
+    - name: Install and use Node.js
+      shell: powershell
+      run: |
+        nvm install 18.12.1
+        nvm use 18.12.1
+        node -v
+        npm -v
