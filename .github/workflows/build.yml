@@ -131,15 +131,12 @@ jobs:
     - name: Zip Release      
       run: |
         cd ./release
-        Get-ChildItem -Directory | ForEach-Object
-        {
-          $subFolder = $_.FullName
-          Get-ChildItem -Path $subFolder -Force | Move-Item -Destination . -Force
-          if (!(Get-ChildItem -Path $subFolder -Force))
-          {
-            Remove-Item -Path $subFolder -Force
-          }
-        }
+        Move-Item -Path ./build-host-${{ matrix.os }}/* -Destination ./
+        Remove-Item -Path ./build-host-${{ matrix.os }}
+        
+        Move-Item -Path ./build-api-${{ matrix.os }}/* -Destination ./
+        Remove-Item -Path ./build-api-${{ matrix.os }}
+        
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
         cd ..
       shell: powershell
