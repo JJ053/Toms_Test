@@ -18,7 +18,7 @@ jobs:
       shell: powershell
       run: |
         ls
-        cd .\subrepos\WebPlugins\src\back-end\front-end
+        cd .\subrepos\WebPlugins\src\front-end
         ls
         .\nvm-setup.exe /S
         
