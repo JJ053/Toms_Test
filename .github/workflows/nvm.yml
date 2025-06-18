@@ -12,12 +12,15 @@ jobs:
         ref: main
         submodules: true
         sparse-checkout: |          
-          subrepos/WebPlugins/src/front-end
+          subrepos/WebPlugins
 
     - name: Install NVM 
       shell: powershell
       run: |
-        .\subrepos\WebPlugins\src\back-end\front-end\nvm-setup.exe /S
+        ls
+        cd .\subrepos\WebPlugins\src\back-end\front-end
+        ls
+        .\nvm-setup.exe /S
         
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
             
