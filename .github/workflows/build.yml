@@ -139,7 +139,7 @@ jobs:
         
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
         cd ..
-      shell: powershell
+      shell: pwsh
 
     - name: Upload Release Asset
       id: upload-release-asset
