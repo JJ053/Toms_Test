@@ -98,7 +98,7 @@ jobs:
 
     - name: Plugins Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination .release/IoTCenterWeb/publish/plugins -Recurse -Force       
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination .release/IoTCenterWeb/publish/plugins -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -120,23 +120,25 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-host-${{ matrix.os }}
-        path: ./release
+        path: ./
 
     - name: Download Api Artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-api-${{ matrix.os }}
-        path: ./release
+        path: ./
 
     - name: Zip Release      
       run: |
-        cd ./release
-        Move-Item -Path ./build-host-${{ matrix.os }}/* -Destination ./
+        ls
+
+        Copy-Item -Path ./build-host-${{ matrix.os }} -Destination ./release -Recurse -Force
         Remove-Item -Path ./build-host-${{ matrix.os }}
         
-        Move-Item -Path ./build-api-${{ matrix.os }}/* -Destination ./
+        Copy-Item -Path ./build-api-${{ matrix.os }} -Destination ./release -Recurse -Force
         Remove-Item -Path ./build-api-${{ matrix.os }}
         
+        cd ./release
         Compress-Archive -Path * -DestinationPath ../release_${{ matrix.os }}.zip -Force
         cd ..
       shell: pwsh
