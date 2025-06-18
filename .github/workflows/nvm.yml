@@ -1,0 +1,41 @@
+name: Windows Node.js Example with Local nvm.exe
+on: [push]
+
+jobs:
+  web-build:    
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+        submodules: true
+        sparse-checkout: |
+          subrepos/WebPlugins/src/back-end/front-end
+
+    - name: Install NVM 
+      shell: cmd
+      run: |
+        copy nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
+    
+        echo "%LOCALAPPDATA%\nvm" >> %GITHUB_PATH%
+
+    - name: Verify NVM Installation
+      shell: cmd
+      run: |
+        nvm --version
+
+    - name: Install Node.js
+      shell: cmd
+      run: |
+        nvm install 14.21.3
+        nvm use 14.21.3
+
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Build Project
+      run: |
+        cd packages\IoTCenterWebPlugin
+        npm run build
