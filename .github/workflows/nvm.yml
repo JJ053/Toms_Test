@@ -21,12 +21,13 @@ jobs:
         cd .\subrepos\WebPlugins\src\front-end
         ls
         .\nvm-setup.exe /S
-
-        $nvmPath = [System.IO.Path]::Combine($env:APPDATA, "nvm")
         
-        $env:Path += ";$nvmPath"
-            
-        nvm version
+    - name: Set NVM To PATH
+      run: |
+        $nvmPath = "$env:USERPROFILE\.nvm"
+        $npmPath = "$env:USERPROFILE\.nvm\npm"
+        $env:Path = "$nvmPath;$npmPath;$env:Path"
+        Set-Item -Path Env:Path -Value $env:Path
 
     - name: Verify NVM Installation
       shell: cmd
@@ -43,7 +44,11 @@ jobs:
     - name: Install Dependencies
       run: npm install
       
+    - name: Npm Test
+      run: npm test
+
     - name: Build Project
       run: |
+        ls
         cd packages\IoTCenterWebPlugin
         npm run build
