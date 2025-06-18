@@ -93,7 +93,7 @@ jobs:
     - name: Plugins Publish
       run: |
         cd ./release
-        Copy-Item -Path ../subrepos/WebPlugins/src/back-end/plugins/* -Destination ./IoTCenterWeb/publish/plugins -Recurse -Force
+        Copy-Item -Path ../subrepos/WebPlugins/src/back-end/plugins/* -Destination ./IoTCenterWeb/publish/plugins/ -Recurse -Force
         cd ..
       shell: pwsh
 
