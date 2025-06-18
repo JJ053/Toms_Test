@@ -12,8 +12,14 @@ jobs:
         ref: main
         submodules: true
         sparse-checkout: |
-          subrepos/WebPlugins/src/back-end/front-end
-        fetch-depth: 1 
+          /*
+          !*/
+          /subrepos/WebPlugins
+          /subrepos/WebPlugins/src
+          /subrepos/WebPlugins/src/back-end
+          /subrepos/WebPlugins/src/back-end/front-end
+          /subrepos/WebPlugins/src/back-end/front-end/*
+        sparse-checkout-cone-mode: false
 
     - name: Install NVM 
       shell: cmd
