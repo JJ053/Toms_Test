@@ -91,10 +91,8 @@ jobs:
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Publish
-      run: |
-        cd ./release
-        Copy-Item -Path ../subrepos/WebPlugins/src/back-end/plugins/* -Destination ./IoTCenterWeb/publish/plugins/ -Recurse -Force
-        cd ..
+      run: |        
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination .release/IoTCenterWeb/publish/plugins -Recurse -Force       
       shell: pwsh
 
     - name: Upload Artifacts
