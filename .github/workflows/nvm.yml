@@ -24,7 +24,7 @@ jobs:
         
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
             
-        nvm version
+        nvm --version
 
     - name: Verify NVM Installation
       shell: cmd
