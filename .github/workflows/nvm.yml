@@ -16,11 +16,8 @@ jobs:
 
     - name: Install NVM 
       shell: cmd
-      run: |
-        dir        
-        cd ./subrepos/WebPlugins/src/back-end/front-end
-        dir
-        copy nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
+      run: |          
+        copy subrepos/WebPlugins/src/back-end/front-end/nvm-setup.exe "%LOCALAPPDATA%\nvm\nvm.exe"
     
         echo "%LOCALAPPDATA%\nvm" >> %GITHUB_PATH%
 
