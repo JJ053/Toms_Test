@@ -242,35 +242,11 @@ jobs:
         name: build-web-plugin
         path: ./
 
-    - name: Set Output File Name
-      id: set-artifact-name
+    
+    - name: Zip Release      
       run: |
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          echo "artifact_name=Windows.zip" >> $GITHUB_ENV
-          echo "archive_ext=zip" >> $GITHUB_ENV
-        elif [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          echo "artifact_name=Linux_x86_x64.tar.gz" >> $GITHUB_ENV
-          echo "archive_ext=tar.gz" >> $GITHUB_ENV
-        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          echo "artifact_name=MacOsxArm64.tar.gz" >> $GITHUB_ENV
-          echo "archive_ext=tar.gz" >> $GITHUB_ENV
-        else
-          echo "artifact_name=${{ runner.os }}_${{ runner.arch }}_${{ github.ref_name }}_release.zip" >> $GITHUB_ENV
-          echo "archive_ext=zip" >> $GITHUB_ENV
-        fi
-        shell: bash
-
-    - name: Compress Release (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force        
+        Compress-Archive -Path * -DestinationPath ./release_${{ matrix.os }}.zip -Force        
       shell: pwsh
-
-    - name: Compress Release (Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        tar -czvf ${{ env.artifact_name }} ./
-      shell: bash
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -279,6 +255,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./${{ env.artifact_name }}
-        asset_name: ${{ env.artifact_name }}
-        asset_content_type: application/${{ env.archive_ext }}
+        asset_path: ./release_${{ matrix.os }}.zip
+        asset_name: ${{ runner.os }}_${{ runner.arch }}_${{ github.ref_name }}_release.zip
+        asset_content_type: application/zip
