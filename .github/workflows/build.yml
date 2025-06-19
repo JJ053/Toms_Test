@@ -230,7 +230,7 @@ jobs:
           echo "artifact_name=${{ runner.os }}_${{ runner.arch }}_${{ github.ref_name }}_release.zip" >> $GITHUB_ENV
           echo "archive_ext=zip" >> $GITHUB_ENV
         fi
-        shell: bash
+      shell: bash
     
     - name: Download Host Artifacts
       uses: actions/download-artifact@v4
