@@ -29,9 +29,8 @@ jobs:
         pnpm install 
         pnpm --version
         ls
-        cd /subrepos/WebPlugins/src/back-end/front-end/packages
-        ls
-        cd /IoTCenterWebBase
+        cd /subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        
         pnpm build
-
+      shell: pwsh
 
