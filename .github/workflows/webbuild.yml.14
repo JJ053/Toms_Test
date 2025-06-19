@@ -1,4 +1,4 @@
-name: Web Build and Release1
+name: Web Plugin Build and Release
 on:
   push:
   
@@ -14,27 +14,25 @@ jobs:
         ref: main
         submodules: recursive
         sparse-checkout: |
-          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
 
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: '23.1.0'
+        node-version: '14.21.3'
 
     - name: Install pnpm
       run: |
         npm --version
 
-        npm install pnpm -g
-        
-        pnpm --version
         ls
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        pnpm install --no-frozen-lockfile
-        ls
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        npm install 
+        ls        
         tree
+        npm --version
         ls
-        pnpm build
+        npm run build-all
         ls
       shell: pwsh
 

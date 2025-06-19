@@ -98,7 +98,7 @@ jobs:
 
     - name: Plugins Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination .release/IoTCenterWeb/publish/plugins -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -135,7 +135,7 @@ jobs:
 
     - name: Web Base Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination .release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
