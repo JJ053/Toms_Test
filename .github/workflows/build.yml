@@ -191,7 +191,7 @@ jobs:
 
     - name: Web Plugin Publish
       run: |
-        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
+        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static -Recurse -Force
         Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
