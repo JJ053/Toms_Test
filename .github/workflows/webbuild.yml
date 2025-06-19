@@ -41,7 +41,11 @@ jobs:
     - name: Install pnpm
       run: |
         ls
-        ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/
-        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static -Recurse -Force
+        $folderPath = "./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"        
+        if(Test-Path $folderPath)
+        {
+          Remove-Item -Path $folderPath -Recurse -Force
+        }
+        
         ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/
       shell: pwsh
