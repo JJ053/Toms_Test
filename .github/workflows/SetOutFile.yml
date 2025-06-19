@@ -1,0 +1,32 @@
+name: Build and Release
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set output for artifact name
+        id: set-artifact-name
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "artifact_name=myapp-windows.zip" >> $GITHUB_ENV
+            echo "archive_ext=zip" >> $GITHUB_ENV
+          else
+            echo "artifact_name=myapp-${{ matrix.os }}.tar.gz" >> $GITHUB_ENV
+            echo "archive_ext=tar.gz" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name : out
+        run: |
+          echo  ${{ env.artifact_name }}
+          echo ${{ env.archive_ext }}
