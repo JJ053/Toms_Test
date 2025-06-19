@@ -1,0 +1,31 @@
+name: Web Build and Release
+on:
+  push:
+  
+jobs:
+  web-build:
+    
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+        submodules: true
+        sparse-checkout: |
+          subrepos/WebPlugins/src/back-end/front-end/packages
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23.1.0'
+
+    - name: Install pnpm
+      run: |
+        npm --version
+        pnpm --version
+
+        #npm install pnpm -g
+        #pnpm install 
+        #pnpm build
