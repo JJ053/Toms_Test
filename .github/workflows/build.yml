@@ -125,7 +125,7 @@ jobs:
       with:
         node-version: '23.1.0'
 
-    - name: Install pnpm
+    - name: Install && Build
       run: |
         npm install pnpm -g
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
@@ -144,8 +144,45 @@ jobs:
         name: build-web-base
         path: ./release/*
 
+  web-plugin-build:
+    needs: create-release
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+        submodules: true
+        sparse-checkout: |
+          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '14.21.3'
+
+    - name: Install && Build
+      run: |
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        npm install
+        npm run build-all
+      shell: pwsh      
+
+    - name: Web Plugin Publish
+      run: |
+        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+      shell: pwsh
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-web-plugin
+        path: ./release/*
+
   release-upload :
-    needs: [create-release,host-build,api-build,web-base-build]
+    needs: [create-release,host-build,api-build,web-base-build,web-plugin-build]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -170,6 +207,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-web-base
+        path: ./
+
+    - name: Download Web Plugin Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-web-plugin
         path: ./
 
     - name: Zip Release      
