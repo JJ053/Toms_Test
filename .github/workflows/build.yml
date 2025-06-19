@@ -256,18 +256,22 @@ jobs:
         name: build-web-plugin
         path: ./
 
-
-
-    - name: Compress Release (Windows)
+    - name: Compress Release (windows)
       if: matrix.os == 'windows-latest'
       run: |
         Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force        
       shell: pwsh
 
-    - name: Compress Release (Linux/macOS)
-      if: matrix.os != 'windows-latest'
+    - name: Compress Release (macOS)
+      if: matrix.os == 'macos-latest'
       run: |
         tar -czvf ${{ env.artifact_name }} ./
+      shell: bash
+
+    - name: Compress Release (ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        tar -czvf ${{ env.artifact_name }} -- *
       shell: bash
 
     - name: Upload Release Asset
