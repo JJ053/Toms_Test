@@ -38,7 +38,9 @@ jobs:
         npm --version
         ls
         npm run build-all
-        ls        
+        ls
+        ls ./dist
+        cd $GITHUB_WORKSPACE
         ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist
         Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static -Recurse -Force
         ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist
