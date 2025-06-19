@@ -30,7 +30,7 @@ jobs:
         pnpm --version
         ls
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        pnpm install 
+        pnpm install --no-frozen-lockfile
         ls
         tree
         pnpm build

@@ -27,8 +27,8 @@ jobs:
 
         ls
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
-        ls        
         npm install 
+        ls        
         tree
         npm --version
         npm run build-all
