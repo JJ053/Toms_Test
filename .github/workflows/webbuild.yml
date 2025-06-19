@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: true
+        submodules: recursive
         sparse-checkout: |
           subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
 
