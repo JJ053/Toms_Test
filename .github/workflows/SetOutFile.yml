@@ -11,9 +11,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Set output for artifact name
         id: set-artifact-name
         run: |
