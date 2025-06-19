@@ -31,6 +31,8 @@ jobs:
         ls        
         tree
         npm --version
+        ls
         npm run build-all
+        ls
       shell: pwsh
 

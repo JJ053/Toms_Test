@@ -33,6 +33,8 @@ jobs:
         pnpm install --no-frozen-lockfile
         ls
         tree
+        ls
         pnpm build
+        ls
       shell: pwsh
 
