@@ -35,11 +35,13 @@ jobs:
         npm install 
         ls        
         npm run build-all
-        ls
-        
-        cd $GITHUB_WORKSPACE
-        ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist
-        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static -Recurse -Force
-        ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist
+        ls     
       shell: pwsh
 
+    - name: Install pnpm
+      run: |
+        ls
+        ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/
+        Remove-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static -Recurse -Force
+        ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/
+      shell: pwsh
