@@ -24,8 +24,10 @@ jobs:
     - name: Install pnpm
       run: |
         npm --version
-        pnpm --version
 
-        #npm install pnpm -g
-        #pnpm install 
-        #pnpm build
+        npm install pnpm -g
+        pnpm install 
+        pnpm --version
+        cd ./subrepos/WebPlugins/src/back-end/front-end/packages/IoTCenterWebBase
+        pnpm build
+
