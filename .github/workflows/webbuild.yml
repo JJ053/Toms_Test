@@ -28,6 +28,7 @@ jobs:
         npm install pnpm -g
         pnpm install 
         pnpm --version
-        cd ./subrepos/WebPlugins/src/back-end/front-end/packages/IoTCenterWebBase
+        ls
+        cd ./IoTCenterWebBase
         pnpm build
 
