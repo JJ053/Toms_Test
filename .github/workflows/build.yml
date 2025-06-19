@@ -185,6 +185,7 @@ jobs:
     - name: Install && Build
       run: |
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cat package.json
         npm install
         npm run build-all
       shell: pwsh      
