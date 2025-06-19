@@ -30,7 +30,8 @@ jobs:
         pnpm --version
         ls
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        
+        ls
+        tree
         pnpm build
       shell: pwsh
 
