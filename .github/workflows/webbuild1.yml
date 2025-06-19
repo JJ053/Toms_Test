@@ -14,23 +14,24 @@ jobs:
         ref: main
         submodules: true
         sparse-checkout: |
-          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
 
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: '14.21.3'
+        node-version: '23.1.0'
 
     - name: Install pnpm
       run: |
         npm --version
 
+        npm install pnpm -g
+        pnpm install 
+        pnpm --version
         ls
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
-        ls        
-        npm install 
+        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        ls
         tree
-        npm --version
-        npm run build-all
+        pnpm build
       shell: pwsh
 
