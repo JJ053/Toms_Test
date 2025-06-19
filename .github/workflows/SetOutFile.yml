@@ -18,11 +18,17 @@ jobs:
         id: set-artifact-name
         run: |
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo "artifact_name=myapp-windows.zip" >> $GITHUB_ENV
+            echo "artifact_name=Windows.zip" >> $GITHUB_ENV
             echo "archive_ext=zip" >> $GITHUB_ENV
-          else
-            echo "artifact_name=myapp-${{ matrix.os }}.tar.gz" >> $GITHUB_ENV
+          elif [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+            echo "artifact_name=Linux_x86_x64.tar.gz" >> $GITHUB_ENV
             echo "archive_ext=tar.gz" >> $GITHUB_ENV
+          elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+            echo "artifact_name=MacOsxArm64.tar.gz" >> $GITHUB_ENV
+            echo "archive_ext=tar.gz" >> $GITHUB_ENV
+          else
+            echo "artifact_name=${{ runner.os }}_${{ runner.arch }}_${{ github.ref_name }}_release.zip" >> $GITHUB_ENV
+            echo "archive_ext=zip" >> $GITHUB_ENV
           fi
         shell: bash
 
