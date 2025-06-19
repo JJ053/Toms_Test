@@ -39,5 +39,7 @@ jobs:
         ls
         npm run build-all
         ls
+        cd dist
+        ls
       shell: pwsh
 
