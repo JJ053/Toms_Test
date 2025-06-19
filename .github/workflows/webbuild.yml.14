@@ -45,7 +45,6 @@ jobs:
         if(Test-Path $folderPath)
         {
           Remove-Item -Path $folderPath -Recurse -Force
-        }
-        
+        }        
         ls ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/
       shell: pwsh
