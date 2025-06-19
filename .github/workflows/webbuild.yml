@@ -12,9 +12,14 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: recursive
+        submodules: true
         sparse-checkout: |
           subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+
+    - name: Update submodules
+      run: |
+        git submodule init
+        git submodule update --init --recursive --remote
 
     - name: Setup Node
       uses: actions/setup-node@v4
