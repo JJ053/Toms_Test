@@ -84,12 +84,19 @@ jobs:
         ref: main
         submodules: true
         sparse-checkout: |
+          shells
           subrepos/WebPlugins/src/back-end
 
     - name: Update submodules
-      run: |
+      run: |        
+        ls
+        echo 'ls'
         git submodule init
         git submodule update --init --recursive --remote
+        cd subrepos
+        ls
+        echo 'ls'
+        cd ..
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
