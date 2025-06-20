@@ -38,8 +38,10 @@ jobs:
 
     - name: Update submodules
       run: |
+        ls
         git submodule init
         git submodule update --init --recursive --remote
+        ls
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -107,7 +109,8 @@ jobs:
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Publish
-      run: |        
+      run: |
+        ls
         Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
         Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./release -Recurse -Force
         Copy-Item -Path ./shells -Destination ./release -Recurse -Force
