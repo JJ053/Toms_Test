@@ -262,7 +262,7 @@ jobs:
     - name: Compress Release (windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force        
+        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force
       shell: pwsh
 
     - name: Compress Release (macOS)
@@ -287,3 +287,35 @@ jobs:
         asset_path: ./${{ env.artifact_name }}
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
+
+    - name: Log in to the Container registry
+      if: matrix.os == 'ubuntu-latest'
+      uses: docker/login-action@v3.4
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      if: matrix.os == 'ubuntu-latest'
+      id: meta
+      uses: docker/metadata-action@v5.7
+      with:
+        images: ghcr.io/${{ github.repository }}
+
+    - name: Build and push Docker image
+      if: matrix.os == 'ubuntu-latest'
+      id: push
+      uses: docker/build-push-action@v6.18
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2.4
+      with:
+        subject-name: ghcr.io/${{ github.repository }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
