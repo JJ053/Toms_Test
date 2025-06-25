@@ -274,13 +274,7 @@ jobs:
     - name: Compress Release (ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        echo "-----"
-        pwd
-        echo "-----"
         tar -czvf ${{ env.artifact_name }} -- *
-        echo "-----"
-        ls
-        echo "-----"
       shell: bash
 
     - name: Upload Release Asset
@@ -306,7 +300,10 @@ jobs:
         echo "-----"
         ls
         echo "-----"
-        mkdir Release && mv -v {*,.*} Release/ 2>/dev/null
+        mkdir -p Release
+        shopt -s dotglob
+        mv -v * Release/
+        shopt -u dotglob
         echo "-----"
         ls
         echo "-----"
