@@ -53,11 +53,11 @@ jobs:
       run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
 
     - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Release --no-build --output ./release/bin
+      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Release --no-build --output ./Release/bin
 
     - name: Data Publish
       run: |
-        cd ./release
+        cd ./Release
         Copy-Item -Path ../subrepos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
         cd ..
       shell: pwsh
@@ -66,7 +66,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: build-host-${{ matrix.os }}
-        path: ./release/*
+        path: ./Release/*
 
   api-build:
     needs: create-release
@@ -102,23 +102,23 @@ jobs:
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Release --no-build --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Release --no-build --output ./Release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Publish
       run: |
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./release -Recurse -Force
-        Copy-Item -Path ./shells -Destination ./release -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./Release/IoTCenterWeb/publish/plugins -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./Release -Recurse -Force
+        Copy-Item -Path ./shells -Destination ./Release -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-api-${{ matrix.os }}
-        path: ./release/*
+        path: ./Release/*
 
   web-base-build:
     needs: create-release
@@ -153,14 +153,14 @@ jobs:
 
     - name: Web Base Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./Release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-web-base
-        path: ./release/*
+        path: ./Release/*
 
   web-plugin-build:
     needs: create-release
@@ -199,14 +199,14 @@ jobs:
         {
           Remove-Item -Path $folderPath -Recurse -Force
         }
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./Release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-web-plugin
-        path: ./release/*
+        path: ./Release/*
 
   release-upload :
     needs: [create-release,host-build,api-build,web-base-build,web-plugin-build]
@@ -262,7 +262,7 @@ jobs:
     - name: Compress Release (windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force        
+        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force
       shell: pwsh
 
     - name: Compress Release (macOS)
@@ -287,3 +287,35 @@ jobs:
         asset_path: ./${{ env.artifact_name }}
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
+
+    - name: Log in to the Container registry
+      if: matrix.os == 'ubuntu-latest'
+      uses: docker/login-action@v3.4
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      if: matrix.os == 'ubuntu-latest'
+      id: meta
+      uses: docker/metadata-action@v5.7
+      with:
+        images: ghcr.io/${{ github.repository }}
+
+    - name: Build and push Docker image
+      if: matrix.os == 'ubuntu-latest'
+      id: push
+      uses: docker/build-push-action@v6.18
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2.4
+      with:
+        subject-name: ghcr.io/${{ github.repository }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
