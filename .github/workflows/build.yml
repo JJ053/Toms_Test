@@ -53,11 +53,11 @@ jobs:
       run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
 
     - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Release --no-build --output ./release/bin
+      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --self-contained false --configuration Release --no-build --output ./Release/bin
 
     - name: Data Publish
       run: |
-        cd ./release
+        cd ./Release
         Copy-Item -Path ../subrepos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
         cd ..
       shell: pwsh
@@ -66,7 +66,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: build-host-${{ matrix.os }}
-        path: ./release/*
+        path: ./Release/*
 
   api-build:
     needs: create-release
@@ -102,23 +102,23 @@ jobs:
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Release --no-build --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --self-contained false --configuration Release --no-build --output ./Release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Publish
       run: |
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./release -Recurse -Force
-        Copy-Item -Path ./shells -Destination ./release -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./Release/IoTCenterWeb/publish/plugins -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./Release -Recurse -Force
+        Copy-Item -Path ./shells -Destination ./Release -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-api-${{ matrix.os }}
-        path: ./release/*
+        path: ./Release/*
 
   web-base-build:
     needs: create-release
@@ -153,14 +153,14 @@ jobs:
 
     - name: Web Base Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./Release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-web-base
-        path: ./release/*
+        path: ./Release/*
 
   web-plugin-build:
     needs: create-release
@@ -199,14 +199,14 @@ jobs:
         {
           Remove-Item -Path $folderPath -Recurse -Force
         }
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./Release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-web-plugin
-        path: ./release/*
+        path: ./Release/*
 
   release-upload :
     needs: [create-release,host-build,api-build,web-base-build,web-plugin-build]
