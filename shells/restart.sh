@@ -10,7 +10,7 @@ while true
 do
     host_dir=`echo ~`                                       # Current user home directory
     proc_name="GWHost1.dll"                                 # Process name
-    file_name="$GLOBAL_INSTALL_PATH/IoTCenterWeb/shell/grpc.log"  # Log file
+    file_name="$GLOBAL_INSTALL_PATH/shells/grpc.log"  # Log file
     pid=0
 
     proc_num()                                              # Calculate process count
