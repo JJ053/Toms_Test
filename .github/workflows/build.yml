@@ -307,6 +307,7 @@ jobs:
         echo "-----"
         mv ./TOMs/* ./
         rm -rf ./Release/${{ env.artifact_name }}
+        rm -rf ./TOMs
         echo "-----"
         pwd
         echo "-----"
