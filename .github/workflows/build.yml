@@ -288,12 +288,6 @@ jobs:
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
 
-    - name: Checkout repository
-      if: matrix.os == 'ubuntu-latest'  
-      uses: actions/checkout@v4
-      with: 
-        ref: main
-
     - name: Container Prepare
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -309,6 +303,20 @@ jobs:
         ls
         echo "-----"
       shell: bash
+
+    - name: Checkout repository
+      if: matrix.os == 'ubuntu-latest'  
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+
+    - name: Container Prepare1
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo "-----"
+        pwd
+        echo "-----"
+        ls
 
     - name: Log in to the Container registry
       if: matrix.os == 'ubuntu-latest'
