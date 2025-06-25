@@ -1,0 +1,43 @@
+name: push test
+on:
+  push:
+  
+jobs:
+  web-build:    
+    runs-on: ubuntu-latest
+    steps:
+    - name: Container Prepare1      
+      run: |
+        mkdir Release
+        cd Release
+        touch 1.txt
+        ls
+        echo "-----"
+        cd ..
+        ls
+        echo "-----"
+        pwd
+        echo "-----"
+        ls
+        echo "-----"
+      shell: bash
+    - name: Checkout repository
+      if: matrix.os == 'ubuntu-latest'  
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+        clean: false
+        path: TOMs
+
+    - name: Container Prepare1
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo "-----"
+        ls
+        echo "-----"
+        mv ./TOMs/* ./        
+        echo "-----"
+        pwd
+        echo "-----"
+        ls
+      shell: bash

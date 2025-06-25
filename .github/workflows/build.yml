@@ -297,6 +297,7 @@ jobs:
       with: 
         ref: main
         clean: false
+        path: TOMs
 
     - name: Container Prepare1
       if: matrix.os == 'ubuntu-latest'
@@ -304,6 +305,7 @@ jobs:
         echo "-----"
         ls
         echo "-----"
+        mv ./TOMs/* ./
         rm -rf ./Release/${{ env.artifact_name }}
         echo "-----"
         pwd
