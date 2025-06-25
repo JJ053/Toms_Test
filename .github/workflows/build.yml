@@ -239,41 +239,44 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-host-${{ matrix.os }}
-        path: ./
+        path: ./Release/
 
     - name: Download Api Artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-api-${{ matrix.os }}
-        path: ./
+        path: ./Release/
 
     - name: Download Web Base Artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-web-base
-        path: ./
+        path: ./Release/
 
     - name: Download Web Plugin Artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-web-plugin
-        path: ./
+        path: ./Release/
 
     - name: Compress Release (windows)
       if: matrix.os == 'windows-latest'
       run: |
+        cd ./Release
         Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force
       shell: pwsh
 
     - name: Compress Release (macOS)
       if: matrix.os == 'macos-latest'
       run: |
+        cd ./Release
         tar -czvf ${{ env.artifact_name }} ./
       shell: bash
 
     - name: Compress Release (ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
+        cd ./Release
         tar -czvf ${{ env.artifact_name }} -- *
       shell: bash
 
@@ -284,25 +287,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./${{ env.artifact_name }}
+        asset_path: ./Release/${{ env.artifact_name }}
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
-
-    - name: Container Prepare
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        echo "-----"
-        pwd
-        echo "-----"
-        ls
-        echo "-----"
-        rm -rf ${{ env.artifact_name }}        
-        mkdir -p Release
-        find . ! -path . ! -path ./Release -exec mv -v {} Release/ \;
-        echo "-----"
-        ls
-        echo "-----"
-      shell: bash
 
     - name: Checkout repository
       if: matrix.os == 'ubuntu-latest'  
@@ -313,10 +300,12 @@ jobs:
     - name: Container Prepare1
       if: matrix.os == 'ubuntu-latest'
       run: |
+        rm -rf ./Release/${{ env.artifact_name }}
         echo "-----"
         pwd
         echo "-----"
         ls
+      shell: bash
 
     - name: Log in to the Container registry
       if: matrix.os == 'ubuntu-latest'
