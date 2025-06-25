@@ -274,9 +274,13 @@ jobs:
     - name: Compress Release (ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
+        echo "-----"
         pwd
+        echo "-----"
         tar -czvf ${{ env.artifact_name }} -- *
+        echo "-----"
         ls
+        echo "-----"
       shell: bash
 
     - name: Upload Release Asset
@@ -293,10 +297,19 @@ jobs:
     - name: Container Prepare
       if: matrix.os == 'ubuntu-latest'
       run: |
+        echo "-----"
         pwd
+        echo "-----"
         ls
+        echo "-----"
+        rm -rf ${{ env.artifact_name }}
+        echo "-----"
+        ls
+        echo "-----"
         mkdir Release && mv -v {*,.*} Release/ 2>/dev/null
+        echo "-----"
         ls
+        echo "-----"
       shell: bash
 
     - name: Log in to the Container registry
