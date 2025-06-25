@@ -288,6 +288,12 @@ jobs:
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
 
+    - name: Checkout repository
+      if: matrix.os == 'ubuntu-latest'  
+      uses: actions/checkout@v4
+      with: 
+        ref: main
+
     - name: Container Prepare
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -296,14 +302,9 @@ jobs:
         echo "-----"
         ls
         echo "-----"
-        rm -rf ${{ env.artifact_name }}
-        echo "-----"
-        ls
-        echo "-----"
+        rm -rf ${{ env.artifact_name }}        
         mkdir -p Release
-        shopt -s dotglob
-        mv -v * Release/
-        shopt -u dotglob
+        find . ! -path . ! -path ./Release -exec mv -v {} Release/ \;
         echo "-----"
         ls
         echo "-----"
