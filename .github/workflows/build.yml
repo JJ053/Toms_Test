@@ -145,25 +145,10 @@ jobs:
 
     - name: Install && Build
       run: |
-        echo "-----"
-        ls
-        echo "-----"
         npm install pnpm -g
-        echo "-----"
-        ls
-        echo "-----"
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-        echo "-----"
-        ls
-        echo "-----"
         pnpm install --no-frozen-lockfile
-        echo "-----"
-        ls
-        echo "-----"
         pnpm build
-        echo "-----"
-        ls
-        echo "-----"
       shell: pwsh      
 
     - name: Web Base Publish
@@ -303,7 +288,7 @@ jobs:
         asset_name: ${{ env.artifact_name }}
         asset_content_type: application/${{ env.archive_ext }}
 
-  image-push :
+  image-upload :
     needs: [create-release,host-build,api-build,web-base-build,web-plugin-build]
     runs-on: ubuntu-latest
 
@@ -337,12 +322,7 @@ jobs:
       with:
         name: build-web-plugin
         path: ./Release/
-    - name: Container Prepare1
-      run: |
-        pwd
-        echo "-----"
-        ls
-        echo "-----"
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with: 
@@ -350,17 +330,10 @@ jobs:
         clean: false
         path: TOMs
 
-    - name: Container Prepare
+    - name: Workplace Prepare
       run: |
-        echo "-----"
-        ls
-        echo "-----"
         mv ./TOMs/* ./        
-        rm -rf ./TOMs
-        echo "-----"
-        pwd
-        echo "-----"
-        ls
+        rm -rf ./TOMs        
       shell: bash
 
     - name: Log in to the Container registry      
@@ -370,7 +343,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
+    - name: Extract metadata for Docker
       id: meta
       uses: docker/metadata-action@v5.7
       with:
