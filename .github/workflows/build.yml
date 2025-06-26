@@ -302,13 +302,13 @@ jobs:
     - name: Download Host Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-host-${{ matrix.os }}
+        name: build-host-ubuntu-latest
         path: ./Release/
 
     - name: Download Api Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-api-${{ matrix.os }}
+        name: build-api-ubuntu-latest
         path: ./Release/
 
     - name: Download Web Base Artifacts
