@@ -145,10 +145,25 @@ jobs:
 
     - name: Install && Build
       run: |
+        echo "-----"
+        ls
+        echo "-----"
         npm install pnpm -g
+        echo "-----"
+        ls
+        echo "-----"
         cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        echo "-----"
+        ls
+        echo "-----"
         pnpm install --no-frozen-lockfile
-        pnpm build        
+        echo "-----"
+        ls
+        echo "-----"
+        pnpm build
+        echo "-----"
+        ls
+        echo "-----"
       shell: pwsh      
 
     - name: Web Base Publish
