@@ -9,9 +9,9 @@ jobs:
     steps:
     
     - name: Sync to Gitee
-      uses: wearerequired/git-mirror-action@master
+      uses: wearerequired/git-mirror-action@v.1.2.0
       env:
         SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
       with:
-        source-repo: "git@github.com:JJ053/${{ github.repository }}.git"
+        source-repo: "git@github.com:${{ github.repository }}.git"
         destination-repo: "git@gitee.com:GW_zhonglijun/toms_-test.git"
