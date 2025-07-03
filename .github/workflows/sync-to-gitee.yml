@@ -9,7 +9,7 @@ jobs:
     steps:
     
     - name: Sync to Gitee
-      uses: Yikun/hub-mirror-action@mappings
+      uses: Yikun/hub-mirror-action@v1.5
       with:
         src: github/JJ053
         dst: gitee/GW_zhonglijun
