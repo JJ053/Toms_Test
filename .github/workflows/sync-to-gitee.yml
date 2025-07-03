@@ -15,5 +15,4 @@ jobs:
         dst: gitee/GW_zhonglijun
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
         dst_token: ${{ secrets.GITEE_TOKEN }}
-        mappings: "Toms_Test=>open_toms_test"
         static_list: "Toms_Test"
