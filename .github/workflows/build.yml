@@ -64,10 +64,10 @@ jobs:
       run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Host Build
-      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --no-restore
+      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
 
     - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --self-contained false --no-build --output ./release/bin
+      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/bin
 
     - name: Data Publish
       run: |
@@ -127,10 +127,10 @@ jobs:
       run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: WebApi Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --no-restore
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --no-build --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
