@@ -28,7 +28,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - name: Set Os Runtime
+    - name: Set Output File Name
       id: set-os-runtime
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
@@ -36,7 +36,7 @@ jobs:
         elif [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           echo "os_runtime=linux-x64" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          echo "os_runtime=osx-x64" >> $GITHUB_ENV
+          echo "os_runtime=osx-arm64" >> $GITHUB_ENV
         else
           echo "os_runtime=win-x64" >> $GITHUB_ENV
         fi
@@ -64,7 +64,7 @@ jobs:
       run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Host Build
-      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
+      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --no-restore
 
     - name: Host Publish
       run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --self-contained false --no-build --output ./release/bin
@@ -90,7 +90,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - name: Set Os Runtime
+    - name: Set Output File Name
       id: set-os-runtime
       run: |
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
@@ -98,7 +98,7 @@ jobs:
         elif [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           echo "os_runtime=linux-x64" >> $GITHUB_ENV
         elif [ "${{ matrix.os }}" == "macos-latest" ]; then
-          echo "os_runtime=osx-x64" >> $GITHUB_ENV
+          echo "os_runtime=osx-arm64" >> $GITHUB_ENV
         else
           echo "os_runtime=win-x64" >> $GITHUB_ENV
         fi
@@ -127,7 +127,7 @@ jobs:
       run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: WebApi Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
+      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --no-restore
 
     - name: WebApi Publish
       run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --no-build --output ./release/IoTCenterWeb/publish 
