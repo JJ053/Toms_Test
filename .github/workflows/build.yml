@@ -146,22 +146,17 @@ jobs:
       with:
         node-version: '23.1.0'
 
-    - name: LS
-      run: |
-        ls
-      shell: pwsh
-
     - name: Install && Build
       run: |
         npm install pnpm -g
-        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        cd .\repos\WebPlugins\src\front-end\packages\IoTCenterWebBase
         pnpm install --no-frozen-lockfile
         pnpm build
       shell: pwsh
 
     - name: Web Base Publish
       run: |
-        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path .\repos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist -Destination .\release\IoTCenterWeb\publish\wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -187,19 +182,19 @@ jobs:
 
     - name: Install && Build
       run: |
-        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cd .\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin
         npm install
         npm run build-all
       shell: pwsh
 
     - name: Web Plugin Publish
       run: |
-        $folderPath = "./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"
+        $folderPath = ".\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static"
         if(Test-Path $folderPath)
         {
           Remove-Item -Path $folderPath -Recurse -Force
         }
-        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path .\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist -Destination .\release\IoTCenterWeb\publish\wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
