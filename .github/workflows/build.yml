@@ -107,6 +107,7 @@ jobs:
         sparse-checkout: |
           .
           repos/WebPlugins/src/back-end
+          shells
         ref: main
 
     - name: Setup .NET
