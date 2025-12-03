@@ -147,10 +147,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
-      sparse-checkout-cone-mode: true
-      sparse-checkout: |
-        /*
-        /repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/
+        sparse-checkout-cone-mode: true
+        sparse-checkout: |
+          /*
+          /repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/
         ref: main
 
     - name: Setup Node
@@ -185,10 +185,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
-      sparse-checkout-cone-mode: true
-      sparse-checkout: |
-        /*
-        repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/
+        sparse-checkout-cone-mode: true
+        sparse-checkout: |
+          /*
+          repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/
         ref: main
 
     - name: Setup Node
