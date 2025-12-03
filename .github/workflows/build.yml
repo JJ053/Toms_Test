@@ -45,6 +45,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
+        sparse-checkout-cone-mode: true
+        sparse-checkout: |
+          /*
+          repos/GrpcServer/src/
         ref: main
 
     - name: Setup .NET
@@ -99,6 +103,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
+        sparse-checkout-cone-mode: true
+        sparse-checkout: |
+          /*
+          repos/WebPlugins/src/back-end/
         ref: main
 
     - name: Setup .NET
@@ -139,6 +147,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
+      sparse-checkout-cone-mode: true
+      sparse-checkout: |
+        /*
+        /repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/
         ref: main
 
     - name: Setup Node
@@ -173,6 +185,10 @@ jobs:
     - name: Checkout Source
       uses: actions/checkout@v4
       with: 
+      sparse-checkout-cone-mode: true
+      sparse-checkout: |
+        /*
+        repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/
         ref: main
 
     - name: Setup Node
@@ -321,6 +337,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with: 
+        sparse-checkout-cone-mode: true
+        sparse-checkout: |
+          /*
         ref: main
         clean: false
         path: TOMs
