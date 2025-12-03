@@ -26,7 +26,7 @@ echo [!formatted_datetime!] 设置webapi发布目录路径: %webapi_dir% >>%logs
 rem 设置前端发布目录
 set "wwwroot_dir=%webapi_dir%\wwwroot"
 rem 设置 nvm 安装程序路径
-set "nvm_dir=subrepos\WebPlugins\src\front-end\nvm-setup.exe"
+set "nvm_dir=repos\WebPlugins\src\front-end\nvm-setup.exe"
 call :GetTimestamp
 echo [!formatted_datetime!] 设置nvm离线安装程序路径: %nvm_dir% >>%logs_dir%
 rem 创建发布目录并清空旧目录
@@ -70,7 +70,7 @@ if exist "%nvm_dir%" (
 		goto ContinueScript
 	)
 ) else (
-	echo [!formatted_datetime!] 您可能尚未安装nvm-setup程序，请在目录（subrepos\WebPlugins\src\front-end\nvm-setup.exe）手动安装后再次重试。>>%logs_dir%
+	echo [!formatted_datetime!] 您可能尚未安装nvm-setup程序，请在目录（repos\WebPlugins\src\front-end\nvm-setup.exe）手动安装后再次重试。>>%logs_dir%
 	timeout /t 10 >nul
 	goto CheckNVMInstall
 )
@@ -128,7 +128,7 @@ if defined NVM_SYMLINK (
 	"%NVM_HOME%\nvm" use %NODE_VERSION1%
 	PowerShell -Command "Test-Path '%NODE_PATH%'" | findstr /i "True" >nul
 	if %errorlevel% == 0 (
-		"%NVM_SYMLINK%\node" subrepos\WebPlugins\src\front-end\build.js
+		"%NVM_SYMLINK%\node" repos\WebPlugins\src\front-end\build.js
 		call :GetTimestamp
 		echo [!formatted_datetime!] 前端插件已构建完成... >>%logs_dir%
 	) else (
@@ -145,7 +145,7 @@ if defined NVM_SYMLINK (
 	echo [!formatted_datetime!] 正在刷新【%NODE_VERSION2%】^(%NVM_SYMLINK%^)注册表，重新获取nodejs环境变量... >>%logs_dir%
 	PowerShell -Command "Test-Path '%NODE_PATH%'" | findstr /i "True" >nul
 	if %errorlevel% == 0 (
-		"%NVM_SYMLINK%\node" subrepos\WebPlugins\src\front-end\build.js
+		"%NVM_SYMLINK%\node" repos\WebPlugins\src\front-end\build.js
 		call :GetTimestamp
 		echo [!formatted_datetime!] 脚手架已构建完成... >>%logs_dir%
 	) else (
@@ -247,16 +247,16 @@ rem DOTNET SDK CLI目录已找到继续执行后续逻辑
 rem 开始网关构建
 rem 复制数据库配置目录
 if not exist "%release_dir%\data" (
-    xcopy "subrepos\GrpcServer\src\config" "%release_dir%" /E /I
+    xcopy "repos\GrpcServer\src\config" "%release_dir%" /E /I
 ) else (
     echo 数据库配置目录^(%release_dir%\data^)已存在，跳过处理... >>%logs_dir%
 )
 rem 还原网关解决方案
 call :GetTimestamp
 echo [!formatted_datetime!] 开始构建网关解决方案... >>%logs_dir%
-dotnet restore subrepos\GrpcServer\src\IoTCenterHost.sln
+dotnet restore repos\GrpcServer\src\IoTCenterHost.sln
 rem 构建网关解决方案
-dotnet build subrepos\GrpcServer\src\IoTCenterHost.sln --configuration Debug -o "%gateway_dir%" >> "%logs_dir%" 2>&1
+dotnet build repos\GrpcServer\src\IoTCenterHost.sln --configuration Debug -o "%gateway_dir%" >> "%logs_dir%" 2>&1
 if %ERRORLEVEL% neq 0 (
     call :GetTimestamp
     echo [!formatted_datetime!] 错误：网关构建失败，错误代码 %ERRORLEVEL% >> "%logs_dir%"
@@ -271,9 +271,9 @@ rem 开始Web APi构建
 rem 还原解决方案
 call :GetTimestamp
 echo [!formatted_datetime!] 开始构建WebApi解决方案... >>%logs_dir%
-dotnet restore subrepos\WebPlugins\src\back-end\IoTCenterWebApi.sln
+dotnet restore repos\WebPlugins\src\back-end\IoTCenterWebApi.sln
 rem 构建解决方案
-dotnet build subrepos\WebPlugins\src\back-end\IoTCenterWebApi\IoTCenterWebApi.csproj --configuration Debug -o "%webapi_dir%" >> "%logs_dir%" 2>&1
+dotnet build repos\WebPlugins\src\back-end\IoTCenterWebApi\IoTCenterWebApi.csproj --configuration Debug -o "%webapi_dir%" >> "%logs_dir%" 2>&1
 if %ERRORLEVEL% neq 0 (
     call :GetTimestamp
     echo [!formatted_datetime!] 错误：WebApi构建失败，错误代码 %ERRORLEVEL% >> "%logs_dir%"
@@ -282,50 +282,16 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 rem 构建插件输出
-dotnet build subrepos\WebPlugins\src\back-end\IoTCenterWebApi.sln
+dotnet build repos\WebPlugins\src\back-end\IoTCenterWebApi.sln
 rem 复制插件目录至发布目录
-move "subrepos\WebPlugins\src\back-end\plugins" "%webapi_dir%"
+move "repos\WebPlugins\src\back-end\plugins" "%webapi_dir%"
 rem 复制windows服务目录至发布目录
-move "subrepos\WebPlugins\src\back-end\services" "%release_dir%"
+move "repos\WebPlugins\src\back-end\services" "%release_dir%"
 rem 复制shells脚本目录至发布目录
 xcopy ".\shells" "%release_dir%\shells" /E /I
 call :GetTimestamp
 echo [!formatted_datetime!] 完成构建WebApi解决方案... >>%logs_dir%
 rem 结束Web APi构建
-rem 启动网关
-call :GetTimestamp
-echo [!formatted_datetime!] 正在启动网关，请稍后... >>%logs_dir%
-cd "%gateway_dir%"
-rem start cmd /k dotnet GWHost1.dll rem --------------
-rem timeout /t 2 >nul rem --------------
-cd /d "%~dp0%"
-call :GetTimestamp
-echo [!formatted_datetime!] 正在启动WebApi，请稍后... >>%logs_dir%
-rem 启动Web APi
-cd "%webapi_dir%"
-rem start cmd /k dotnet IoTCenterWebApi.dll rem --------------
-rem 启动Web
-cd /d "%~dp0%"
-call :GetTimestamp
-rem echo [!formatted_datetime!] 正在打开IoTCenter访问链接^(https://localhost:44380^)，请稍后... >>%logs_dir% rem --------------
-rem 获取默认浏览器的协议关联（HTTP）
-for /f "tokens=2*" %%a in ('reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice" /v ProgId') do set BROWSER=%%b
-rem 判断常见浏览器类型并调用
-if "%BROWSER%"=="ChromeHTML" (
-    start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --new-window "https://localhost:44380"
-) else if "%BROWSER%"=="MSEdgeHTM" (
-    start "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --new-window "https://localhost:44380"
-) else if "%BROWSER%"=="FirefoxURL" (
-    start "" "C:\Program Files\Mozilla Firefox\firefox.exe" -new-window "https://localhost:44380"
-) else if "%BROWSER%"=="AppXq0fevzme2p429mpbidy6na6cqpiv3i5" (
-    call :GetTimestamp
-	echo [!formatted_datetime! 不支持 Microsoft Edge 浏览器的现代版本（基于 UWP/Win10+）。>>%logs_dir%
-) else (
-	call :GetTimestamp
-    echo [!formatted_datetime!] 未识别的浏览器类型：%BROWSER% >>%logs_dir%
-    echo [!formatted_datetime!] 正在尝试使用系统默认方式打开... >>%logs_dir%
-    start "" "https://localhost:44380"
-)
 
 rem ========== 函数定义 ==========
 :GetTimestamp

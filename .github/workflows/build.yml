@@ -46,14 +46,6 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: true
-        sparse-checkout: |
-          subrepos/GrpcServer
-
-    - name: Update submodules
-      run: |
-        git submodule init
-        git submodule update --init --recursive --remote
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -61,18 +53,18 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Host Restore Dependencies
-      run: dotnet restore ./subrepos/GrpcServer/src/IoTCenterHost.sln
+      run: dotnet restore ./repos/GrpcServer/src/IoTCenterHost.sln
 
     - name: Host Build
-      run: dotnet build ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
+      run: dotnet build ./repos/GrpcServer/src/IoTCenterHost.sln --configuration Release --no-restore
 
     - name: Host Publish
-      run: dotnet publish ./subrepos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/bin
+      run: dotnet publish ./repos/GrpcServer/src/IoTCenterHost.sln --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/bin
 
     - name: Data Publish
       run: |
         cd ./release
-        Copy-Item -Path ../subrepos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
+        Copy-Item -Path ../repos/GrpcServer/src/config/* -Destination ./ -Recurse -Force
         cd ..
       shell: pwsh
 
@@ -108,15 +100,6 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: true
-        sparse-checkout: |
-          shells
-          subrepos/WebPlugins/src/back-end
-
-    - name: Update submodules
-      run: |
-        git submodule init
-        git submodule update --init --recursive --remote
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -124,21 +107,21 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: WebApi Restore Dependencies
-      run: dotnet restore ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+      run: dotnet restore ./repos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: WebApi Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
+      run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
-      run: dotnet build ./subrepos/WebPlugins/src/back-end/IoTCenterWebApi.sln
+      run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi.sln
 
     - name: Plugins Publish
       run: |
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
-        Copy-Item -Path ./subrepos/WebPlugins/src/back-end/services -Destination ./release -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/back-end/plugins -Destination ./release/IoTCenterWeb/publish/plugins -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/back-end/services -Destination ./release -Recurse -Force
         Copy-Item -Path ./shells -Destination ./release -Recurse -Force
       shell: pwsh
 
@@ -157,14 +140,6 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: true
-        sparse-checkout: |
-          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
-
-    - name: Update submodules
-      run: |
-        git submodule init
-        git submodule update --init --recursive --remote
 
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -174,14 +149,14 @@ jobs:
     - name: Install && Build
       run: |
         npm install pnpm -g
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase
+        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase
         pnpm install --no-frozen-lockfile
         pnpm build
       shell: pwsh      
 
     - name: Web Base Publish
       run: |        
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -199,14 +174,6 @@ jobs:
       uses: actions/checkout@v4
       with: 
         ref: main
-        submodules: true
-        sparse-checkout: |
-          subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
-
-    - name: Update submodules
-      run: |
-        git submodule init
-        git submodule update --init --recursive --remote
 
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -215,19 +182,19 @@ jobs:
 
     - name: Install && Build
       run: |
-        cd ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
+        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         npm install
         npm run build-all
       shell: pwsh      
 
     - name: Web Plugin Publish
       run: |
-        $folderPath = "./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"        
+        $folderPath = "./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"        
         if(Test-Path $folderPath)
         {
           Remove-Item -Path $folderPath -Recurse -Force
         }
-        Copy-Item -Path ./subrepos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
