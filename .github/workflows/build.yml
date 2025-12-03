@@ -113,7 +113,7 @@ jobs:
       run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish
+      run: dotnet publish ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish 
 
     - name: Plugins Build
       run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi.sln
@@ -146,29 +146,17 @@ jobs:
       with:
         node-version: '23.1.0'
 
-    - name: Install
+    - name: Install && Build
       run: |
-        gl
         npm install pnpm -g
-
-    - name: Build
-      run: |
-        gl
-        cd repos
-        cd WebPlugins
-        cd src
-        cd front-end
-        cd packages
-        cd IoTCenterWebBase
-        gl
+        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase
         pnpm install --no-frozen-lockfile
         pnpm build
       shell: pwsh
 
     - name: Web Base Publish
       run: |
-        gl
-        Copy-Item -Path .\repos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist -Destination .\release\IoTCenterWeb\publish\wwwroot -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -194,19 +182,19 @@ jobs:
 
     - name: Install && Build
       run: |
-        cd .\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin
+        cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         npm install
         npm run build-all
       shell: pwsh
 
     - name: Web Plugin Publish
       run: |
-        $folderPath = ".\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist\static"
+        $folderPath = "./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"
         if(Test-Path $folderPath)
         {
           Remove-Item -Path $folderPath -Recurse -Force
         }
-        Copy-Item -Path .\repos\WebPlugins\src\front-end\packages\IoTCenterWebPlugin\dist -Destination .\release\IoTCenterWeb\publish\wwwroot -Recurse -Force
+        Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
     - name: Upload Artifacts
@@ -305,7 +293,7 @@ jobs:
       attestations: write
       id-token: write
 
-    steps:    
+    steps:
     - name: Download Host Artifacts
       uses: actions/download-artifact@v4
       with:
