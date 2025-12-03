@@ -113,7 +113,7 @@ jobs:
       run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release --no-restore
 
     - name: WebApi Publish
-      run: dotnet publish ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish 
+      run: dotnet publish ./repos/WebPlugins/src/back-end/IoTCenterWebApi/IoTCenterWebApi.csproj --configuration Release -r ${{ env.os_runtime }} --self-contained false --output ./release/IoTCenterWeb/publish
 
     - name: Plugins Build
       run: dotnet build ./repos/WebPlugins/src/back-end/IoTCenterWebApi.sln
@@ -146,16 +146,21 @@ jobs:
       with:
         node-version: '23.1.0'
 
+    - name: LS
+      run: |
+        ls
+      shell: pwsh
+
     - name: Install && Build
       run: |
         npm install pnpm -g
         cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase
         pnpm install --no-frozen-lockfile
         pnpm build
-      shell: pwsh      
+      shell: pwsh
 
     - name: Web Base Publish
-      run: |        
+      run: |
         Copy-Item -Path ./repos/WebPlugins/src/front-end/packages/IoTCenterWebBase/dist -Destination ./release/IoTCenterWeb/publish/wwwroot -Recurse -Force
       shell: pwsh
 
@@ -185,11 +190,11 @@ jobs:
         cd ./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin
         npm install
         npm run build-all
-      shell: pwsh      
+      shell: pwsh
 
     - name: Web Plugin Publish
       run: |
-        $folderPath = "./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"        
+        $folderPath = "./repos/WebPlugins/src/front-end/packages/IoTCenterWebPlugin/dist/static"
         if(Test-Path $folderPath)
         {
           Remove-Item -Path $folderPath -Recurse -Force
@@ -257,7 +262,7 @@ jobs:
     - name: Compress Release (windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force        
+        Compress-Archive -Path * -DestinationPath ${{ env.artifact_name }} -Force
       shell: pwsh
 
     - name: Compress Release (macOS)
@@ -327,11 +332,11 @@ jobs:
 
     - name: Workplace Prepare
       run: |
-        mv ./TOMs/* ./        
-        rm -rf ./TOMs        
+        mv ./TOMs/* ./
+        rm -rf ./TOMs
       shell: bash
 
-    - name: Log in to the Container registry      
+    - name: Log in to the Container registry
       uses: docker/login-action@v3.4
       with:
         registry: ghcr.io
