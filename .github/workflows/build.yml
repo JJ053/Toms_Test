@@ -146,16 +146,28 @@ jobs:
       with:
         node-version: '23.1.0'
 
-    - name: Install && Build
+    - name: Install
       run: |
+        gl
         npm install pnpm -g
-        cd repos\WebPlugins\src\front-end\packages\IoTCenterWebBase
+
+    - name: Build
+      run: |
+        gl
+        cd repos
+        cd WebPlugins
+        cd src
+        cd front-end
+        cd packages
+        cd IoTCenterWebBase
+        gl
         pnpm install --no-frozen-lockfile
         pnpm build
       shell: pwsh
 
     - name: Web Base Publish
       run: |
+        gl
         Copy-Item -Path .\repos\WebPlugins\src\front-end\packages\IoTCenterWebBase\dist -Destination .\release\IoTCenterWeb\publish\wwwroot -Recurse -Force
       shell: pwsh
 
