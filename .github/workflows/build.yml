@@ -148,11 +148,8 @@ jobs:
 
     - name: Install && Build
       run: |
-        ls
         npm install pnpm -g
-        ls
-        cd .\repos\WebPlugins\src\front-end\packages\IoTCenterWebBase
-        ls
+        cd repos\WebPlugins\src\front-end\packages\IoTCenterWebBase
         pnpm install --no-frozen-lockfile
         pnpm build
       shell: pwsh
